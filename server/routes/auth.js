@@ -7,6 +7,7 @@ const { body, validationResult } = require("express-validator");
 
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "TooFarForRonaldoToThinkAboutIt!!!Ohhhh!!!";
+const fetchuser = require("../middleware/fetchuser");
 
 router.post(
   "/createuser",
@@ -90,5 +91,15 @@ router.post(
     }
   }
 );
+
+router.post("/getuser", fetchuser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    res.send(user);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 module.exports = router;
